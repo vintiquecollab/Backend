@@ -24,12 +24,18 @@ const CustemerSchema = new mongoose.Schema({
   password  : {
      type: String, required: true
      },  
-  createdAt: { 
-    type: Date, default: Date.now
+
+  isDeleted: {
+    type: Boolean, default: true 
    },
-  updatedAt: {
-     type: Date, default: null
-     },
+    isActive: 
+    { type: Boolean, default: true 
+   },
+  
+}
+,
+{
+   timestamps : true
 });
 
 const Custemer = mongoose.model('Custemer', CustemerSchema);
