@@ -8,6 +8,7 @@ const verifyToken = require("../middleware/verifyToken");
 router.post("/signup", userController.signupController);
 
 router.post("/login", userController.loginController);
+router.get("/me", verifyToken, userController.myProfile);
 router.get("/", verifyToken, userController.getUsersController);
 router.get("/:id", verifyToken, userController.getUsersByIdController);
 router.put("/:id", verifyToken, userController.updateUserController);

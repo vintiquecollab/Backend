@@ -102,17 +102,27 @@ const getUsersByIdController = async (req, res) => {
   }
 };
 
-// const deleteUserController = async (req, res) => {
-//   const id = req.params.id;
+const myProfile = async (req, res) => {
+  try {
+    const decodedToken = req.decodedToken;
+    console.log(decodedToken);
+    const userId = decodedToken.userId;
+    const user = await users.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    res.status(200).json({
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    res.status(500).send("Error: " + err);
+  }
+};
 
-//   try {
-//     await users.deleteOne({ _id: id });
-
-//     res.status(201).send("User Deleted!!!!");
-//   } catch (err) {
-//     res.status(500).send("Error: " + err);
-//   }
-// };
 const updateUserController = async (req, res) => {
   try {
     const user = await users.updateOne({ _id: req.params.id }, req.body, {
@@ -134,7 +144,6 @@ module.exports = {
   getUsersByIdController,
   loginController,
   signupController,
-
-  //   deleteUserController,
+  myProfile,
   updateUserController,
 };
