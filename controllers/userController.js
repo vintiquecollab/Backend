@@ -1,66 +1,83 @@
 const mongoose = require("mongoose");
-const users = require("../models/Users");
+const users = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const jwtSecretKey = "your_secret_key";
 
 const loginController = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await users.findOne({ email: email });
+    const user = await users.findOne({ email });
 
-    if (!user || user.length == 0) {
-      return res.status(401).json({ error: "Invalid username or password" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ error: "Invalid password" });
-    }
-    res.cookie(
-      "user",
-      JSON.stringify({
-        username: user.username,
-        id: user._id,
-      })
-    );
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    const message = `Hi ${user.username}`;
-    res.status(201).json({ message });
-  } catch (err) {
-    console.error("Error:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, jwtSecretKey, {
+      expiresIn: "24h",
+    });
+
+    res.status(200).json({
+      token,
+      user: { id: user._id, username: user.username, email: user.email },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
+// ---------------------- signupController---------------
 const signupController = async (req, res) => {
-  try {
-    bcrypt.hash(req.body.password, 10, async (err, hash) => {
-      req.body.password = hash;
-      await users.insertMany(req.body);
-      res.status(201).send("user created!!!");
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
+  const { username, email, password } = req.body;
 
-const logoutController = async (req, res) => {
   try {
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ error: "Error logging out" });
-      }
-      res.clearCookie("user");
-      res.status(200).json({ message: "Logout successful" });
+    let existingUser = await users.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new users({
+      username,
+      email,
+      password: hashedPassword,
     });
-  } catch (err) {
-    res.status(500).json({ error: "Error logging out" });
+
+    await newUser.save();
+
+    const token = jwt.sign({ userId: newUser._id }, jwtSecretKey, {
+      expiresIn: "24h",
+    });
+
+    res.status(201).json({
+      token,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+// ------------------------getUsersController------------------
 
 const getUsersController = async (req, res) => {
   try {
     const user = await users.find({});
-    console.log(req.cookies.user);
+    // console.log(req.cookies.user);
     if (!user) {
       return res.status(404).send("User not found");
     }
@@ -117,7 +134,7 @@ module.exports = {
   getUsersByIdController,
   loginController,
   signupController,
-  logoutController,
+
   //   deleteUserController,
   updateUserController,
 };
