@@ -1,6 +1,8 @@
 const Custemer = require('../models/Custemer');
 const jwt = require('jsonwebtoken');
+const bcrypt=require('bcrypt')
  secretKey="vintique"
+/*
 exports.createCustemers = async (req, res) => {
   try {
     const newCostemer = new Custemer(req.body);
@@ -12,7 +14,81 @@ exports.createCustemers = async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 }
+*/
 
+
+exports.createCustemers = async (req, res) => {
+  const { name, email, phoneNumber, country, city, zipCode, password } = req.body;
+
+  try {
+    let existingCustemer = await Custemer.findOne({ email });
+
+    if (existingCustemer) {
+      return res.status(400).json({ message: "Custemer already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newCustemer = new Custemer({
+      name,
+      email,
+      phoneNumber,
+      country,
+      city,
+      zipCode,
+      password: hashedPassword,
+    });
+
+    await newCustemer.save();
+
+    const token = jwt.sign({ custemerId: newCustemer._id }, secretKey, { expiresIn: '1h' });
+
+    res.status(201).json({
+      token,
+      custemer: {
+        id: newCustemer._id,
+        name: newCustemer.name,
+        email: newCustemer.email,
+        phoneNumber: newCustemer.phoneNumber,
+        country: newCustemer.country,
+        city: newCustemer.city,
+        zipCode: newCustemer.zipCode,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.loginCustemers = async (req, res) => {
+  let email = req.body.email;
+  let password = req.body.password;
+  
+  try {
+    const custemer = await Custemer.findOne({ email });
+
+    if (!custemer) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, custemer.password);
+
+    if (passwordMatch) {
+      const token = jwt.sign({ custemerId: custemer._id }, secretKey, { expiresIn: '1h' });
+      res.cookie('jwt', token, { httpOnly: true });
+      res.json({ message: 'Login successful' });
+    } else {
+      res.status(401).json({ message: 'Invalid email or password' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+/*
 exports.loginCustemers = async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
@@ -30,6 +106,7 @@ exports.loginCustemers = async (req, res) => {
     res.status(401).json({ message: 'Invalid data' });
   }
 }
+*/
 /*
 exports.loginCustemers  = async (req, res) => {
   let email = req.body.email;
@@ -52,8 +129,9 @@ exports.loginCustemers  = async (req, res) => {
     res.status(401).json({ message: 'Invalid email or password' });
   }
 }
-*/
- 
+
+ */
+
 exports.logoutCustemers = async (req, res) => {
   try {
    
@@ -63,6 +141,7 @@ exports.logoutCustemers = async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 }
+
 
 exports.getAllCustemers = async (req, res) => {
   try {

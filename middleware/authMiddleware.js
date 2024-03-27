@@ -10,7 +10,7 @@ function verifierToken(req, res, next) {
           return res.sendStatus(403); 
         }
         
-        req.custemerId = decoded.custemerId;  
+        req.custemerId = decoded.custemerId;
   
         next();
       });
