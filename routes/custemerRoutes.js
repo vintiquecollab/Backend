@@ -1,13 +1,13 @@
 const express=require('express')
 const router=express.Router()
 const custemerController=require('../controllers/custemerController')
-const verifierToken = require('../middleware/authMiddleware');
+const verifyToken = require('../middleware/authMiddleware');
 
 router.post('/signup',custemerController.createCustemers)
 router.post('/login',custemerController.loginCustemers)
-router.get('/',verifierToken,custemerController.getAllCustemers)
-router.get('/me',verifierToken,custemerController.getProfileCustemers)
-router.get('/:id',verifierToken,custemerController.getCustemersById)
-router.put('/:id',verifierToken,custemerController.updateCustemers)
+router.get('/',verifyToken,custemerController.getAllCustemers)
+router.get('/profile/me',verifyToken,custemerController.getProfileCustemers)
+router.get('/:id',verifyToken,custemerController.getCustemersById)
+router.put('/:id',verifyToken,custemerController.updateCustemers)
 
 module.exports = router;

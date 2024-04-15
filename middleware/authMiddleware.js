@@ -1,37 +1,33 @@
-const { models } = require("mongoose");
-const jwt = require('jsonwebtoken');
-
-secretKey="vintique"
+const jwt = require('jsonwebtoken'); 
+secretKey = "vintique"; 
 
 const tryCatch = (param) => async (req, res, next) => {
-    try{
+    try {
         await param(req, res);
-    }
-    catch(error){
+    } catch (error) {
         next(error);
     }
-}
+};
 
-function verifierToken(req, res, next) {
+const verifyToken = (req, res, next) => {
     const bearerHeader = req.headers['authorization'];
-    if (typeof bearerHeader !== 'undefined') {
-      const bearerToken = bearerHeader.split(' ')[1];
-      req.token = bearerToken;
-      jwt.verify(req.token, secretKey, (err, decoded) => {
-        if (err) {
-          return res.sendStatus(403); 
-        }
-        
-        req.custemerId = decoded.custemerId;
-  
-        next();
-      });
-    } else {
-      res.sendStatus(403); 
-    }
-      
-    } 
- 
-module.exports = verifierToken;
 
+    if (typeof bearerHeader !== 'undefined') {
+        const bearerToken = bearerHeader.split(' ')[1];
+        req.token = bearerToken;
+
+        jwt.verify(req.token, secretKey, (err, decoded) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+            req.custemerId = decoded.custemerId;
+
+            next();
+        });
+    } else {
+        res.sendStatus(403);
+    }
+};
+
+module.exports = verifyToken;
 module.exports = tryCatch;
