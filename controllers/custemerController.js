@@ -62,8 +62,8 @@ exports.loginCustemers = async (req, res) => {
 
     if (passwordMatch) {
       const token = jwt.sign({ custemerId: custemer._id }, secretKey, { expiresIn: '1h' });
-      res.status(201).json(    token
-      );
+      res.cookie('jwt', token, { httpOnly: true });
+      res.json({ message: 'Login successful' });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -127,3 +127,4 @@ exports.updateCustemers = async (req, res) => {
     res.status(500).json({ error: 'Server Error' });
   }
 }
+
