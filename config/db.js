@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // MongoDB
-const data_base = process.env.DATABASE_URL
-mongoose.connect(data_base)
-    .then(()=>{
-        console.log('Successfully connect');
-    })
-    .catch(error=>{
-        console.log('Connection error', error);
-    })
+const DATABASE_URL = process.env.DATA_URL;
+mongoose.connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Successfully connected to MongoDB');
+  })
+  .catch(error => {
+    console.error('Connection error:', error);
+  });
