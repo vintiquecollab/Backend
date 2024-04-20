@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const authController = require("../controllers/authController");
-const tryCatch = require("../middleware/authMiddleware");
+const {tryCatch} = require("../middleware/authMiddleware");
 const errorHandller = require("../middleware/errorHandller");
 
 router.post("/register", tryCatch(authController.register));

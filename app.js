@@ -17,6 +17,7 @@ const cors = require("cors");
 // app.use(cors());
 
 // Routers
+app.use("/custemer", custemerRoutes);
 
 app.use("/api/auth", authRoutes);
 
@@ -25,7 +26,7 @@ app.use("/category", categoryRouter);
 app.use("/order", OrderRouter);
 
 app.use("/product", productRouter);
-app.use("/custemer", custemerRoutes);
+
 
 // app.all("*", (req, res) => {
 //   res.send("Page not found");
