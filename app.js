@@ -14,7 +14,7 @@ const authRoutes = require("./routes/authRouter");
 const custemerRoutes = require("./routes/custemerRoutes");
 
 const cors = require("cors");
-// app.use(cors());
+app.use(cors());
 
 // Routers
 app.use("/custemer", custemerRoutes);

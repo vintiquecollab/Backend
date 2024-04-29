@@ -5,7 +5,7 @@ const { verifyToken, tryCatch } = require('../middleware/authMiddleware');
 
 router.post('/signup', tryCatch(custemerController.createCustemers));
 router.post('/login', tryCatch(custemerController.loginCustemers));
-router.get('/', verifyToken, tryCatch(custemerController.getAllCustemers));
+router.get('/', tryCatch(custemerController.getAllCustemers));
 router.get('/profile/me', verifyToken, tryCatch(custemerController.getProfileCustemers));
 router.get('/:id', verifyToken, tryCatch(custemerController.getCustemersById));
 router.put('/:id', verifyToken, tryCatch(custemerController.updateCustemers));

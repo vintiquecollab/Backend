@@ -1,10 +1,10 @@
-/////////////////////////////////////////////////////////////////////
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 var storage = require("local-storage");
 const mailer = require("../middleware/mailer");
 const saltRounds = 10;
+
 const register = async (req, res) => {
   const { first_name, last_name, email, password, confirm_password } = req.body;
   try {
@@ -29,8 +29,7 @@ const register = async (req, res) => {
     if (user) {
       mailer.main("register", user);
       res.json({
-        message:
-          "Successfully registered. Check your email to activate your account",
+        message: "Successfully registered.",
         email: email,
       });
     } else {
@@ -41,6 +40,7 @@ const register = async (req, res) => {
     res.status(500).send("Registration failed");
   }
 };
+
 const login = async (req, res) => {
   const { body } = req;
   if (!body.email || !body.password)
@@ -50,47 +50,14 @@ const login = async (req, res) => {
     !login_user ||
     !(await bcrypt.compare(body.password, login_user.password))
   )
-    throw Error("Email or password is incorect");
-  if (!login_user.verification)
-    throw Error("Check your email to active your account");
+    throw Error("Email or password is incorrect");
   if (!login_user.status) {
     console.log(login_user);
     throw Error("You can't to login");
   }
   const token = await jwt.sign({ id: login_user.id }, process.env.TOKEN_KEY);
   storage("token", token);
-  res.status(200).json({
-    message: "Login success",
-    username: login_user.username,
-    _id: login_user._id,
-    email: login_user.email,
-    token: storage("token"),
-  });
-};
-const verifyEmail = async (req, res) => {
-  try {
-    const token = req.params.token; // Assuming token is passed in the URL params
-
-    if (!token) {
-      return res.status(400).json({ message: "Token is required." });
-    }
-    const verify_email = await jwt.verify(token, process.env.TOKEN_KEY);
-    const verify_user = await User.findOne({ email: verify_email.email });
-    if (!verify_user) {
-      return res.status(404).json({ message: "User not found." });
-    }
-    if (verify_user.verification == true)
-      res.json({ message: "Your account is already activated." });
-    const verification_email = await User.updateOne(
-      { email: verify_email.email },
-      { $set: { verification: true } }
-    );
-    if (!verification_email) throw Error("You can't to active your account");
-    res.json({ message: "Your account has been activated successfully." });
-  } catch (error) {
-    console.error("Error verifying email:", error);
-    res.status(500).json({ message: "Failed to verify email." });
-  }
+  res.status(200).json({token});
 };
 
 const forgotPassword = async (req, res) => {
@@ -107,6 +74,7 @@ const forgotPassword = async (req, res) => {
     res.status(500).json({ message: "Failed ." });
   }
 };
+
 const verifyForgotPassword = async (req, res) => {
   const token = req.params.token;
   const verify_token = await jwt.verify(token, process.env.TOKEN_KEY);
@@ -123,13 +91,11 @@ const logout = async (req, res) => {
   storage.clear();
   res.send(true);
 };
-//////////////////////////////////////////////////////////////////
+
 module.exports = {
   register,
   login,
-  verifyEmail,
   forgotPassword,
   verifyForgotPassword,
   logout,
 };
-/////////////////////////////////////////////////////////////////////
