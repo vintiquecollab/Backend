@@ -2,13 +2,7 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 const cookieParser = require('cookie-parser');
-
-<<<<<<< HEAD
-
 require("./config/db");
-=======
-require("./Config/db.js");
->>>>>>> d66996176cc3935ebd5d6d027ecabd63ac67bcc3
 require("dotenv").config();
 
 const categoryRouter = require("./routes/categoryRouter");
