@@ -3,8 +3,12 @@ const app = express();
 app.use(express.json());
 const cookieParser = require('cookie-parser');
 
+<<<<<<< HEAD
 
 require("./config/db");
+=======
+require("./Config/db.js");
+>>>>>>> d66996176cc3935ebd5d6d027ecabd63ac67bcc3
 require("dotenv").config();
 
 const categoryRouter = require("./routes/categoryRouter");
@@ -35,8 +39,6 @@ app.use("/product", productRouter);
 // Error handler middleware
 // app.use(errorHandler);
 
-app.listen(process.env.PORT || 2001, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT}`)
-);
+app.listen(process.env.PORT || 2001, () => console.log(`Server running `));
 
 module.exports = app;
