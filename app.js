@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-require("./Config/db");
+require("./Config/db.js");
 require("dotenv").config();
 
 const categoryRouter = require("./routes/categoryRouter");
@@ -30,8 +30,6 @@ app.use("/product", productRouter);
 // Error handler middleware
 // app.use(errorHandler);
 
-app.listen(process.env.PORT || 2001, () =>
-  console.log(`Server running on http://localhost:${process.env.PORT}`)
-);
+app.listen(process.env.PORT || 2001, () => console.log(`Server running `));
 
 module.exports = app;
