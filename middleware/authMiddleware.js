@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken'); 
-secretKey = "vintique"; 
 
 const tryCatch = (param) => async (req, res, next) => {
     try {
@@ -8,6 +7,7 @@ const tryCatch = (param) => async (req, res, next) => {
         next(error);
     }
 };
+
 const authorizationAdmin = (req,res,next) =>{
     const bearerHeader = req.headers['authorization'];
 
@@ -15,7 +15,7 @@ const authorizationAdmin = (req,res,next) =>{
         const bearerToken = bearerHeader.split(' ')[1];
         req.token = bearerToken;
 
-        jwt.verify(req.token, secretKey, (err, decoded) => {
+        jwt.verify(req.token,  process.env.TOKEN_KEY, (err, decoded) => {
             if (err) {
                 return res.sendStatus(403);
             }
@@ -36,7 +36,7 @@ const verifyToken = (req, res, next) => {
         const bearerToken = bearerHeader.split(' ')[1];
         req.token = bearerToken;
 
-        jwt.verify(req.token, secretKey, (err, decoded) => {
+        jwt.verify(req.token,  process.env.TOKEN_KEY, (err, decoded) => {
             if (err) {
                 return res.sendStatus(403);
             }
@@ -51,6 +51,6 @@ const verifyToken = (req, res, next) => {
 
 module.exports = {
     verifyToken,
-    tryCatch
+    tryCatch,
+    authorizationAdmin
 };
-

@@ -46,19 +46,33 @@ const login = async (req, res) => {
   if (!body.email || !body.password)
     throw Error("Fill the all fields to login");
   const login_user = await User.findOne({ email: body.email });
+  console.log(login_user);
   if (
     !login_user ||
     !(await bcrypt.compare(body.password, login_user.password))
-  )
-    throw Error("Email or password is incorrect");
-  if (!login_user.status) {
-    console.log(login_user);
-    throw Error("You can't to login");
-  }
+  ) return res.status(400).json({message:"Email or password is incorrect"}) 
+
   const token = await jwt.sign({ id: login_user.id }, process.env.TOKEN_KEY);
-  storage("token", token);
-  res.status(200).json({token});
+  res.status(200).json({ token });
 };
+
+const getLoggedInUserInfo = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log(user);
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error in getLoggedInUserInfo:', error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+}
+
+
 
 const forgotPassword = async (req, res) => {
   const email = req.body.email;
@@ -95,6 +109,7 @@ const logout = async (req, res) => {
 module.exports = {
   register,
   login,
+  getLoggedInUserInfo, 
   forgotPassword,
   verifyForgotPassword,
   logout,
