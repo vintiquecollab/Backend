@@ -5,7 +5,7 @@ var storage = require("local-storage");
 const mailer = require("../middleware/mailer");
 const saltRounds = 10;
 
-const register = async (req, res) => {
+exports.register = async (req, res) => {
   const { first_name, last_name, email, password, confirm_password } = req.body;
   try {
     if (!first_name || !last_name || !email || !password || !confirm_password) {
@@ -41,7 +41,7 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+exports.login = async (req, res) => {
   const { body } = req;
   if (!body.email || !body.password)
     throw Error("Fill the all fields to login");
@@ -56,7 +56,7 @@ const login = async (req, res) => {
   res.status(200).json({ token });
 };
 
-const getLoggedInUserInfo = async (req, res) => {
+exports.getLoggedInUserInfo = async (req, res) => {
   try {
     const userId = req.userId;
     const user = await User.findById(userId);
@@ -74,7 +74,7 @@ const getLoggedInUserInfo = async (req, res) => {
 
 
 
-const forgotPassword = async (req, res) => {
+exports.forgotPassword = async (req, res) => {
   const email = req.body.email;
   try {
     if (!email) res.status(400).json({ message: "Enter your email" });
@@ -89,7 +89,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-const verifyForgotPassword = async (req, res) => {
+exports.verifyForgotPassword = async (req, res) => {
   const token = req.params.token;
   const verify_token = await jwt.verify(token, process.env.TOKEN_KEY);
   const verify_token_email = await User.findOne({ email: verify_token.email });
@@ -101,16 +101,7 @@ const verifyForgotPassword = async (req, res) => {
   res.status(201).json({message: 'go to form foget password'})
 };
 
-const logout = async (req, res) => {
+exports.logout = async (req, res) => {
   storage.clear();
   res.send(true);
-};
-
-module.exports = {
-  register,
-  login,
-  getLoggedInUserInfo, 
-  forgotPassword,
-  verifyForgotPassword,
-  logout,
 };

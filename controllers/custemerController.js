@@ -1,8 +1,6 @@
 const Custemer = require('../models/Custemer');
 const jwt = require('jsonwebtoken');
 const bcrypt=require('bcrypt')
- secretKey="vintique"
-
 
 exports.createCustemers = async (req, res) => {
   const { name, email, phoneNumber, country, city, zipCode, password } = req.body;
@@ -28,7 +26,7 @@ exports.createCustemers = async (req, res) => {
 
     await newCustemer.save();
 
-    const token = jwt.sign({ custemerId: newCustemer.id}, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ custemerId: newCustemer.id},  process.env.TOKEN_KEY, { expiresIn: '1h' });
 
     res.status(201).json({
       token,
@@ -61,7 +59,7 @@ exports.loginCustemers = async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, custemer.password);
 
     if (passwordMatch) {
-      const token = jwt.sign({ custemerId: custemer.id}, secretKey, { expiresIn: '1h' });
+      const token = jwt.sign({ custemerId: custemer.id},  process.env.TOKEN_KEY, { expiresIn: '1h' });
       res.json({ message: 'Login successful',token });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
