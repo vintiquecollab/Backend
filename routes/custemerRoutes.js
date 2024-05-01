@@ -9,6 +9,7 @@ router.get('/', tryCatch(custemerController.getAllCustemers));
 router.get('/profile/me', verifyToken, tryCatch(custemerController.getProfileCustemers));
 router.get('/:id', verifyToken, tryCatch(custemerController.getCustemersById));
 router.put('/:id', verifyToken, tryCatch(custemerController.updateCustemers));
+router.post('/admin', tryCatch(custemerController.createCustemerAdmin));
 
 
 module.exports = router;

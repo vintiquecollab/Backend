@@ -1,6 +1,15 @@
 const Custemer = require('../models/Custemer');
 const jwt = require('jsonwebtoken');
 const bcrypt=require('bcrypt')
+exports.createCustemerAdmin = async (req, res) => {
+  try {
+    const custemer = new Custemer(req.body);
+    const savedCustemer = await custemer.save();
+    res.status(201).json(savedCustemer);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 exports.createCustemers = async (req, res) => {
   const { name, email, phoneNumber, country, city, zipCode, password } = req.body;
