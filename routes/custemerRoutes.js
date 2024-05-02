@@ -8,7 +8,7 @@ router.post('/login', tryCatch(custemerController.loginCustemers));
 router.get('/', tryCatch(custemerController.getAllCustemers));
 router.get('/profile/me', verifyToken, tryCatch(custemerController.getProfileCustemers));
 router.get('/:id', verifyToken, tryCatch(custemerController.getCustemersById));
-router.put('/:id', verifyToken, tryCatch(custemerController.updateCustemers));
+router.put('/:id', tryCatch(custemerController.updateCustemers));
 router.post('/admin', tryCatch(custemerController.createCustemerAdmin));
 
 

@@ -93,12 +93,13 @@ exports.logoutCustemers = async (req, res) => {
 
 exports.getAllCustemers = async (req, res) => {
   try {
-    const custemer = await Custemer.find();
+    const custemer = await Custemer.find().sort({ createdAt: -1 });
     res.json(custemer);
   } catch (error) {
     res.status(500).json({ error: 'Server Error' });
   }
 }
+
 exports.getProfileCustemers = async (req, res) => {
   try {
     const custemerid=req.custemerId
