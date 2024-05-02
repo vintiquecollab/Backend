@@ -2,22 +2,21 @@ const Category = require("../models/category");
 
 const createCategory = async (req, res) => {
   try {
-    // console.log('ggggggggggggggggggggggg')
-    // const newCategory = req.body
     const find = await Category.findOne({ name: req.body.name });
     if (find) {
-      res.status(201).json({ message: "this category already exists" });
+      return res.status(400).json({ error: "This category already exists" });
     } else {
       const newCategory = await Category.create({
         name: req.body.name,
         media: req.body.media,
       });
-      res.send(newCategory);
-      res.status(201).json({ message: "Category created successfully" });
+      return res.status(201).json({
+        message: "Category created successfully",
+        category: newCategory,
+      });
     }
-    res.send('jjjjjjjjjjjjjjjjjjjjjjjjj')
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 const getCategories = async (req, res) => {
@@ -32,9 +31,9 @@ const updateCategory = async (req, res) => {
   try {
     const category = await Category.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name },
+      { name: req.body.name }
       // { new: true },
-      { media: req.body.media}
+      // { media: req.body.media }
     );
     return res.json({ message: "Category updated successfully", category });
   } catch (error) {
@@ -50,17 +49,21 @@ const updateCategory = async (req, res) => {
 //   }
 // };
 const deleteCategory = async (req, res) => {
-  const id = req.params.id
+  const id = req.params.id;
   try {
     const findCategory = await Category.findById(id);
-    console.log(findCategory);
-    if(!findCategory) res.status(400).json({message: 'Category not exist'})
-    if(findCategory.status) await Category.findByIdAndUpdate(id, {status: false})
-    if(findCategory.status) res.json({ message: "Category deleted successufully" });
-    if(!findCategory.status) await Category.findByIdAndUpdate(id, {status: true})
-    if(!findCategory.status) res.json({ message: "Category reset successufully" });
+    if (!findCategory)
+      return res.status(400).json({ message: "Category not exist" });
+
+    if (findCategory.status) {
+      await Category.findByIdAndUpdate(id, { status: false });
+      return res.json({ message: "Category deleted successfully" });
+    } else {
+      await Category.findByIdAndUpdate(id, { status: true });
+      return res.json({ message: "Category reset successfully" });
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -70,4 +73,3 @@ module.exports = {
   updateCategory,
   deleteCategory,
 };
-
