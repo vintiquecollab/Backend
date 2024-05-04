@@ -31,9 +31,12 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
   media: {
-    type: [String],
-    required: false,
-  },
+    type: Object,
+    default: {
+      url: "",
+      publicId: null,
+    },
+  }, 
   createdAt: {
     type: Date,
     default: Date.now,
