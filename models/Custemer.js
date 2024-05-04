@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const CustemerSchema = new mongoose.Schema({
+
   name: 
   { 
     type: String, required: true 
@@ -24,6 +25,13 @@ const CustemerSchema = new mongoose.Schema({
   password  : {
      type: String, required: true
      },  
+     image: {
+      type: Object,
+      default: {
+        url: "",
+        publicId: null,
+      },
+    }, 
 
   isDeleted: {
     type: Boolean, default: true 
