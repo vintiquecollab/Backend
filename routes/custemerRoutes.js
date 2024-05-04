@@ -8,7 +8,7 @@ router.post('/signup', tryCatch(custemerController.createCustemers));
 router.post('/login', tryCatch(custemerController.loginCustemers));
 router.get('/',photoUpload.single("image"),  tryCatch(custemerController.getAllCustemers));
 router.get('/profile/me',photoUpload.single("image"),  verifyToken, tryCatch(custemerController.getProfileCustemers));
-router.get('/:id',photoUpload.single("image"),  verifyToken, tryCatch(custemerController.getCustemersById));
+router.get('/:id',photoUpload.single("image"), tryCatch(custemerController.getCustemersById));
 router.put('/:id',photoUpload.single("image"), tryCatch(custemerController.updateCustemers));
 router.post('/admin',photoUpload.single("image"), tryCatch(custemerController.createCustemerAdmin));
 
