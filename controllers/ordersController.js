@@ -12,11 +12,13 @@ exports.getAll = async (req, res) => {
 ///////////////////////////////////////////
 exports.getOne = async (req, res) => {
   try {
-    const order = await Order.findOne({ _id: req.params.id });
+    const order = await Order.findOne({ _id: req.params.id }).populate('products.product_id');
     res.status(200).json(order);
   } catch (error) {
     res.status(404).json({ message: 'Order not found' });
-  }};
+  }
+};
+
 ///////////////////////////////////////////
 exports.createOrder = async (req, res) => {
   try {  
@@ -51,6 +53,7 @@ await order.save();
   } catch (error) {
     res.status(400).json({ message: error.message });
   }};
+  
 ///////////////////////////////////////////
 exports.updateOrder = async (req, res) => {
   try {

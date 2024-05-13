@@ -5,7 +5,7 @@ const  photoUpload = require('../middleware/photoUpload')
 
 router.post('/',photoUpload.single("image"), productsController.addProduct);
 router.get('/',photoUpload.single("image"), productsController.getAllProducts);
-router.get('/:id', productsController.getProductById);
+router.get('/:id',photoUpload.single("image"), productsController.getProductById);
 router.put('/:id',photoUpload.single("image"), productsController.updateProduct);
 router.delete('/:id', productsController.deleteProduct);
 

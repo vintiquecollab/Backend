@@ -29,8 +29,15 @@ const adminSchema = new mongoose.Schema({
   },
   status: {
     type: Boolean,
-    default: true
+    default: false
   },
+  image: {
+    type: Object,
+    default: {
+      url: "",
+      publicId: null,
+    },
+  }, 
   createdAt: {
     type: Date,
     default: Date.now,
