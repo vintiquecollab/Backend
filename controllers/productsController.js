@@ -130,11 +130,29 @@ const deleteProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const mongoose = require('mongoose');
+
+const getProductsByCategory = asyncHandler(async (req, res) => {
+    try {
+        const { category } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(category)) {
+            return res.status(400).json({ message: 'Invalid category ID' });
+        }
+
+        const products = await Product.find({ category_id: category });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 
 module.exports = {
     addProduct,
     getAllProducts,
     getProductById,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductsByCategory
 };
