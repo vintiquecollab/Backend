@@ -51,12 +51,13 @@ const addProduct = asyncHandler(async (req, res) => {
 // Read: Obtenir tous les produits
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Read: Obtenir un produit par son ID
 const getProductById = async (req, res) => {
@@ -72,15 +73,7 @@ const getProductById = async (req, res) => {
   }
 };
 
-const getProductsByCategory = async (req, res) => {
-  try {
-    const categoryId = req.params.categoryId;
-    const products = await Product.find({ category_id: categoryId });
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+ 
 
 // Update: Mettre à jour un produit par son ID
 const updateProduct = async (req, res) => {

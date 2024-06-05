@@ -40,7 +40,7 @@ const verifyToken = (req, res, next) => {
             if (err) {
                 return res.sendStatus(403);
             }
-            req.custemerId = decoded.custemerId;
+            req.custemerId = decoded.id;
 
             next();
         });

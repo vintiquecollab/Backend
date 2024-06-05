@@ -94,30 +94,35 @@ exports.createCustemers = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-exports.loginCustemers = async (req, res) => {
-  let email = req.body.email;
-  let password = req.body.password;
-  
+ 
+
+exports.loginCustomers = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Fill all the fields to login" });
+  }
+
   try {
-    const custemer = await Custemer.findOne({ email });
+    const customer = await Custemer.findOne({ email });
 
-    if (!custemer) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+    // For demonstration only: directly compare plain text passwords (not recommended in real-world applications)
+    if (!customer || customer.password !== password) {
+      return res.status(400).json({ message: "Email or password is incorrect" });
     }
 
-    const passwordMatch = await bcrypt.compare(password, custemer.password);
+    const token = jwt.sign({ id: customer.id }, process.env.TOKEN_KEY, {
+      expiresIn: '1h', // Add token expiration if needed
+    });
 
-    if (passwordMatch) {
-      const token = jwt.sign({ custemerId: custemer.id},  process.env.TOKEN_KEY, { expiresIn: '1h' });
-      res.json({ message: 'Login successful',token });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
-    }
+    res.status(200).json({ token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
 
 
 exports.logoutCustemers = async (req, res) => {
@@ -143,6 +148,7 @@ exports.getAllCustemers = async (req, res) => {
 exports.getProfileCustemers = async (req, res) => {
   try {
     const custemerid=req.custemerId
+    console.log(custemerid)
     const custemer = await Custemer.findById(custemerid);
     res.json(custemer);
   } catch (error) {
